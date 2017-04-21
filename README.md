@@ -1,5 +1,7 @@
 # travis-redis-cli-heroku
 
+redis-cli in a dyno
+
 ## Usage
 
     heroku run travis-redis-cli
