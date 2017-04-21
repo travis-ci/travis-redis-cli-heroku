@@ -2,7 +2,14 @@
 
 ## Usage
 
-TBD.
+    heroku run travis-redis-cli
+    heroku run travis-redis-cli travis-production
+    heroku run travis-redis-cli travis-production REDIS_URL
+
+## Config
+
+    heroku config:set HEROKU_ACCESS_TOKEN=...
+    heroku config:set HEROKU_APPS=...
 
 ## Install
 
