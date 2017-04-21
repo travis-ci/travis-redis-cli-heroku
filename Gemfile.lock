@@ -1,0 +1,26 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    erubis (2.7.0)
+    excon (0.55.0)
+    heroics (0.0.21)
+      erubis (~> 2.0)
+      excon
+      multi_json (>= 1.9.2)
+    moneta (0.8.1)
+    multi_json (1.12.1)
+    platform-api (1.0.1)
+      heroics (~> 0.0.21)
+      moneta (~> 0.8.1)
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  platform-api
+
+RUBY VERSION
+   ruby 2.3.3p222
+
+BUNDLED WITH
+   1.14.5
