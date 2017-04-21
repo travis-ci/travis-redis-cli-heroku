@@ -1,0 +1,48 @@
+require 'platform-api'
+require 'concurrent'
+require 'uri'
+require 'shellwords'
+
+heroku = PlatformAPI.connect_oauth(ENV['HEROKU_ACCESS_TOKEN'])
+apps = ENV['HEROKU_APPS'].split(' ')
+
+selected_app = ARGV.shift
+selected_var = ARGV.shift
+
+if selected_app
+  apps = [selected_app]
+end
+
+futures = []
+
+apps.each do |app|
+  futures << Concurrent::Future.execute{
+    addons = heroku.addon.list_by_app(app).select { |addon| addon['addon_service']['name'].include? 'redis' }
+    config = heroku.config_var.info_for_app(app)
+
+    url_vars = addons.map do |addon|
+      var = addon['config_vars'].select { |k,v| k.include?('_URL') }.first
+      [var, config[var]]
+    end.to_h
+
+    [app, url_vars]
+  }
+end
+
+if selected_app && selected_var
+  f = futures.first
+  app, url_vars = f.value
+
+  redis_url = url_vars[selected_var]
+  redis_uri = URI(redis_url)
+
+  exec "redis-cli -a #{redis_uri.password.shellescape} -h #{redis_uri.host} -p #{redis_uri.port}"
+else
+  futures.each do |f|
+    app, url_vars = f.value
+    puts app
+    url_vars.each do |k,v|
+      puts "  #{k}"
+    end
+  end
+end
