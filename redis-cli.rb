@@ -13,36 +13,35 @@ if selected_app
   apps = [selected_app]
 end
 
+if selected_app && selected_var
+  app = selected_app
+  config = heroku.config_var.info_for_app(app)
+
+  redis_url = config[selected_var]
+  redis_uri = URI(redis_url)
+
+  exec "redis-cli -a #{redis_uri.password.shellescape} -h #{redis_uri.host} -p #{redis_uri.port}"
+end
+
 futures = []
 
 apps.each do |app|
   futures << Concurrent::Future.execute{
-    addons = heroku.addon.list_by_app(app).select { |addon| addon['addon_service']['name'].include? 'redis' }
-    config = heroku.config_var.info_for_app(app)
+    addons = heroku.addon.list_by_app(app)
+      .select { |addon| addon['addon_service']['name'].include? 'redis' }
 
-    url_vars = addons.map do |addon|
-      var = addon['config_vars'].select { |k,v| k.include?('_URL') }.first
-      [var, config[var]]
-    end.to_h
+    url_vars = addons.map { |addon|
+      addon['config_vars'].select { |k,v| k.include?('_URL') }.first
+    }.flatten
 
     [app, url_vars]
   }
 end
 
-if selected_app && selected_var
-  f = futures.first
+futures.each do |f|
   app, url_vars = f.value
-
-  redis_url = url_vars[selected_var]
-  redis_uri = URI(redis_url)
-
-  exec "redis-cli -a #{redis_uri.password.shellescape} -h #{redis_uri.host} -p #{redis_uri.port}"
-else
-  futures.each do |f|
-    app, url_vars = f.value
-    puts app
-    url_vars.each do |k,v|
-      puts "  #{k}"
-    end
+  puts app
+  url_vars.each do |k,v|
+    puts "  #{k}"
   end
 end
