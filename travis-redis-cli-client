@@ -1,2 +1,0 @@
-#!/bin/bash
-exec heroku run -a travis-redis-cli travis-redis-cli "$@"
