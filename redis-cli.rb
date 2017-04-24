@@ -3,6 +3,16 @@ require 'concurrent'
 require 'uri'
 require 'shellwords'
 
+if !ENV['HEROKU_ACCESS_TOKEN']
+  puts "error: please provide HEROKU_ACCESS_TOKEN env var"
+  exit 1
+end
+
+if !ENV['HEROKU_APPS']
+  puts "error: please provide HEROKU_APPS env var"
+  exit 1
+end
+
 heroku = PlatformAPI.connect_oauth(ENV['HEROKU_ACCESS_TOKEN'])
 apps = ENV['HEROKU_APPS'].split(' ')
 
