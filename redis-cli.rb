@@ -20,6 +20,11 @@ if selected_app && selected_var
   redis_url = config[selected_var]
   redis_uri = URI(redis_url)
 
+  if !ENV['DYNO']
+    puts "not running on heroku, refusing to connect via plaintext over the internet"
+    exit 1
+  end
+
   exec "redis-cli -a #{redis_uri.password.shellescape} -h #{redis_uri.host} -p #{redis_uri.port}"
 end
 
