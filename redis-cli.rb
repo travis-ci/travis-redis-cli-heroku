@@ -35,7 +35,7 @@ if selected_app && selected_var
     exit 1
   end
 
-  exec "redis-cli -a #{redis_uri.password.shellescape} -h #{redis_uri.host.shellescape} -p #{redis_uri.port.shellescape} #{ARGV.map(&:shellescape).join(' ')}"
+  exec "redis-cli -a #{redis_uri.password.shellescape} -h #{redis_uri.host.shellescape} -p #{redis_uri.port} #{ARGV.map(&:shellescape).join(' ')}"
 end
 
 futures = []
