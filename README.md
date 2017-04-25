@@ -9,6 +9,13 @@ redis-cli in a dyno
 
     $ heroku run travis-redis-cli travis-production REDIS_URL
     my-amazing-redis.computer:12345>
+    
+    $ heroku run travis-redis-cli travis-production REDIS_URL info clients
+    # Clients
+    connected_clients:1234
+    client_longest_output_list:0
+    client_biggest_input_buf:1500
+    blocked_clients:20
 
 ## Install (local)
 
