@@ -56,7 +56,7 @@ end
 futures.each do |f|
   app, url_vars = f.value
   puts app
-  url_vars.each do |k,v|
+  url_vars&.each do |k,v|
     puts "  #{k}"
   end
 end
